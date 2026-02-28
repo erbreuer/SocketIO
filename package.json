@@ -1,0 +1,12 @@
+{
+  "name": "socket-example-webdev",
+  "version": "0.0.1",
+  "description": "socket.io app",
+  "type": "module",
+  "scripts": {
+    "server": "node server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.5.0"
+  }
+}
