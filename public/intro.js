@@ -14,7 +14,19 @@ function getTransportInformation() {
 }
 
 function sendMessage() {
-   socket.emit("hello", "Hallo vom Client!", (response) => {
-     console.log(response); 
-   });
+  socket.emit("hello", "Hallo vom Client!", (response) => {
+    console.log(response);
+  });
 }
+
+function setStatus(text) {
+  document.getElementById("status").textContent = text;
+}
+
+socket.on("connect", () => setStatus("connected"));
+
+socket.on("disconnect", () => setStatus("disconnected"));
+
+socket.io.on("reconnect_attempt", () => setStatus("reconnecting..."));
+
+socket.io.on("reconnect", () => setStatus("reconnected"));
