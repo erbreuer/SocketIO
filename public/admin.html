@@ -1,20 +1,20 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Socket Chat</title>
-  </head>
-  <body>
-    <h1>Mini Chat</h1>
+    <head>
+        <title>Socket Chat</title>
+    </head>
+    <body>
+        <h1>Mini Chat</h1>
 
-    <input id="room" placeholder="Room name" />
-    <button onclick="joinRoom()">Join</button>
+        <input id="room" placeholder="Room name" />
+        <button onclick="joinRoom()">Join</button>
 
-    <ul id="messages"></ul>
+        <ul id="messages"></ul>
 
     <input id="msg" placeholder="message" />
     <button onclick="sendMessage()">Send</button>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="client.js"></script>
-  </body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="admin.js"></script>
+    </body>
 </html>

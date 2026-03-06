@@ -1,14 +1,10 @@
 import http from "http";
 import path from "path";
 import { readFile } from "fs";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 import { Server } from "socket.io";
 
 const httpServer = http.createServer((req, res) => {
   let filePath;
-
   if (req.url === "/") {
     filePath = "./public/intro.html";
   } else if (req.url === "/room") {
@@ -43,8 +39,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("hello", (arg, callback) => {
-    console.log(arg); 
-    callback("Hello from server!"); 
+    console.log(arg);
+    callback("Hello from server!");
   });
 
   socket.on("joinRoom", (room) => {
