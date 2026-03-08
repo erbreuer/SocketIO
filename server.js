@@ -8,7 +8,7 @@ const httpServer = http.createServer((req, res) => {
   if (req.url === "/") {
     filePath = "./public/intro.html";
   } else if (req.url === "/room") {
-    filePath = "./public/index.html";
+    filePath = "./public/rooms.html";
   } else {
     filePath = `./public${req.url}`;
   }
@@ -43,12 +43,30 @@ io.on("connection", (socket) => {
     callback("Hello from server!");
   });
 
-  socket.on("joinRoom", (room) => {
+  socket.on("joinRoom", (room, callback) => {
+    console.log(`Socket ${socket.id} joined room: ${room}`);
     socket.join(room);
+    if (typeof callback === "function") {
+      callback(room);
+    }
+  });
+
+  socket.on("leaveRoom", (room, callback) => {
+    console.log(`Socket ${socket.id} left room: ${room}`);
+    socket.leave(room);
+    if (typeof callback === "function") {
+      callback(room);
+    }
   });
 
   socket.on("message", ({ room, message }) => {
-    io.to(room).emit("message", message);
+    if (room) {
+      // Broadcast message to all clients in the room
+      io.to(room).emit("message", message);
+    } else {
+      socket.broadcast.emit("message", `User mit id: ${socket.id} hat gesendet:`);
+      io.emit("message", message);
+    }
   });
 
   socket.on("disconnect", () => {

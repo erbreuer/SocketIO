@@ -22,11 +22,7 @@ function sendMessage() {
 function setStatus(text) {
   document.getElementById("status").textContent = text;
 }
-
 socket.on("connect", () => setStatus("connected"));
-
 socket.on("disconnect", () => setStatus("disconnected"));
-
 socket.io.on("reconnect_attempt", () => setStatus("reconnecting..."));
-
 socket.io.on("reconnect", () => setStatus("reconnected"));

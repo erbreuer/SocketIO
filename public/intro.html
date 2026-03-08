@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>Socket Chat</title>
-</head>
-<body>
+    <head>
+        <title>Socket Chat</title>
+    </head>
+    <body>
+        <h1>Einfuehrung in Socket.IO</h1>
 
-<h1>Einfuehrung in Socket.IO</h1>
+        <button onclick="sendMessage()">Nachricht senden</button>
+        <p>Status: <span id="status">connecting...</span></p>
+        <button popovertarget="mein-popover">Öffnen</button>
+        <div id="mein-popover" popover>Inhalt des Popovers</div>
 
-<button onclick="sendMessage()">Nachricht senden</button>
-<p>Status: <span id="status">connecting...</span></p>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="intro.js"></script>
-
-</body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="intro.js"></script>
+    </body>
 </html>

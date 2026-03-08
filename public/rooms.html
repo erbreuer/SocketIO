@@ -1,16 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>Socket Chat</title>
-</head>
-<body>
+    <head>
+        <title>Socket Chat</title>
+    </head>
+    <body>
+        <h1>Rooms in Socket IO</h1>
+        <button onclick="joinRoom(1)">Raum 1 betreten</button>
+        <button onclick="joinRoom(2)">Raum 2 betreten</button>
+        <button id="leaveBtn" onclick="leaveRoom()" style="display: none">
+            Raum verlassen
+        </button>
 
-<h1>Einführung in Socket.IO</h1>
+        <ul id="messages"></ul>
 
-<button onclick="joinRoom()">Raum betreten</button>
+        <input id="msg" placeholder="Nachricht eingeben" />
+        <button onclick="sendMessage()">Send</button>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="rooms.js"></script>
-
-</body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="rooms.js"></script>
+    </body>
 </html>
