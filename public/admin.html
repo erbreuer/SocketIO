@@ -1,18 +1,53 @@
 <!doctype html>
 <html>
     <head>
-        <title>Socket Chat</title>
+        <meta charset="utf-8" />
+        <title>Admin Dashboard - Socket.IO</title>
     </head>
     <body>
-        <h1>Mini Chat</h1>
+        <h1>Admin Dashboard</h1>
 
-        <input id="room" placeholder="Room name" />
-        <button onclick="joinRoom()">Join</button>
+        <!-- Login Section -->
+        <div id="loginSection">
+            <h2>Admin Login</h2>
+            <p></p>Bitte geben Sie das Admin-Passwort ein:</p>
+            <input type="password" id="password" placeholder="Passwort" />
+            <div id="loginError" style="color: red; display: none"></div>
+            <button onclick="login()">Login</button>
+        </div>
 
-        <ul id="messages"></ul>
+        <!-- Dashboard Section -->
+        <div id="dashboard" style="display: none">
+            <h2>Server Statistiken</h2>
+            <div id="status">Verbindung wird hergestellt...</div>
 
-    <input id="msg" placeholder="message" />
-    <button onclick="sendMessage()">Send</button>
+            <h3>Namespaces</h3>
+            <div id="namespacesList">Laden...</div>
+
+            <h3>Verbundene Sockets</h3>
+            <div id="connectedCount">0</div>
+
+            <h3>Gesendete Nachrichten (gesamt)</h3>
+            <div id="totalMessages">0</div>
+
+            <h3>Socket Statistiken</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Socket ID</th>
+                        <th>Namespace</th>
+                        <th>Räume</th>
+                        <th>Gesendete Nachrichten</th>
+                        <th>Verbunden seit</th>
+                    </tr>
+                </thead>
+                <tbody id="socketTableBody">
+                    <tr>
+                        <td colspan="5">Keine Daten verfügbar</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="admin.js"></script>
