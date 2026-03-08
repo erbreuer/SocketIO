@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("message", ({ room, message }) => {
+  socket.on("message", ({ room, message }, callback) => {
     if (room) {
       // Broadcast message to all clients in the room
       io.to(room).emit("message", message);
@@ -71,6 +71,10 @@ io.on("connection", (socket) => {
         `User mit id: ${socket.id} hat gesendet:`,
       );
       io.emit("message", message);
+    }
+    // Send acknowledgment back to sender
+    if (typeof callback === "function") {
+      callback("Message received by server");
     }
   });
 

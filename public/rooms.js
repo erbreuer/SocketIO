@@ -50,10 +50,16 @@ function sendMessage() {
 
   if (!message.trim()) return;
 
-  socket.emit("message", {
-    room: currentRoom || null,
-    message,
-  });
+  socket.emit(
+    "message",
+    {
+      room: currentRoom || null,
+      message,
+    },
+    (ack) => {
+      console.log("Message delivered:", ack);
+    },
+  );
 
   document.getElementById("msg").value = "";
 }
