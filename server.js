@@ -40,7 +40,9 @@ io.on("connection", (socket) => {
 
   socket.on("hello", (arg, callback) => {
     console.log(arg);
-    callback("Hello from server!");
+    if (typeof callback === "function") {
+      callback("Hello from server!");
+    }
   });
 
   socket.on("joinRoom", (room, callback) => {
@@ -64,7 +66,10 @@ io.on("connection", (socket) => {
       // Broadcast message to all clients in the room
       io.to(room).emit("message", message);
     } else {
-      socket.broadcast.emit("message", `User mit id: ${socket.id} hat gesendet:`);
+      socket.broadcast.emit(
+        "message",
+        `User mit id: ${socket.id} hat gesendet:`,
+      );
       io.emit("message", message);
     }
   });
