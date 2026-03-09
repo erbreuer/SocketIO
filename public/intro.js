@@ -8,6 +8,7 @@ socket.on("connect", () => {
 function getTransportInformation() {
   const transport = socket.io.engine.transport.name;
   console.log("Starting Protocol:", transport);
+  
   socket.io.engine.on("upgrade", (transport) => {
     console.log("Upgraded to:", transport.name);
   });

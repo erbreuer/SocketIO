@@ -121,23 +121,16 @@ function getServerStats() {
 io.on("connection", (socket) => {
   console.log("user connected");
   console.log("connected with", socket.conn.transport.name);
-
-  // Initialize message count for this socket
-  messageStats.set(socket.id, 0);
-
-  // Broadcast updated stats to admins
-  broadcastStatsToAdmins();
-
   socket.conn.on("upgrade", (transport) => {
     console.log("upgraded to", transport.name);
   });
-
+  
   socket.on("hello", (arg, callback) => {
     console.log(arg);
-    if (typeof callback === "function") {
       callback("Hello from server!");
-    }
   });
+
+  
 
   socket.on("joinRoom", (room, callback) => {
     console.log(`Socket ${socket.id} joined room: ${room}`);
@@ -189,6 +182,9 @@ io.on("connection", (socket) => {
     // Broadcast updated stats to admins
     broadcastStatsToAdmins();
   });
+  
+  messageStats.set(socket.id, 0);
+  broadcastStatsToAdmins();
 });
 
 httpServer.listen(3000, () => {
