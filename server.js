@@ -39,102 +39,6 @@ const httpServer = http.createServer((req, res) => {
 
 const io = new Server(httpServer);
 
-// Admin namespace with password middleware
-const adminNamespace = io.of("/admin");
-
-// Helper function to broadcast stats to all admins
-function broadcastStatsToAdmins() {
-  const stats = getServerStats();
-  adminNamespace.emit("stats", stats);
-}
-
-adminNamespace.use((socket, next) => {
-  const password = socket.handshake.auth.password;
-
-  if (password === ADMIN_PASSWORD) {
-    console.log("Admin authenticated:", socket.id);
-    next();
-  } else {
-    console.log("Admin authentication failed");
-    next(new Error("Falsches Passwort!"));
-  }
-});
-
-adminNamespace.on("connection", (socket) => {
-  console.log("Admin connected:", socket.id);
-
-  // Send stats on request
-  socket.on("getStats", (callback) => {
-    const stats = getServerStats();
-    if (typeof callback === "function") {
-      callback(stats);
-    }
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Admin disconnected:", socket.id);
-  });
-});
-
-// Helper function to gather server statistics
-function getServerStats() {
-  const namespaces = [];
-  let totalSockets = 0;
-  let totalMessages = 0;
-  const socketDetails = [];
-
-  // Only get stats for default namespace '/'
-  const mainNamespace = io.of("/");
-  const adminNamespace = io.of("/admin");
-  const sockets = Array.from(mainNamespace.sockets.values());
-  const adminSockets = Array.from(adminNamespace.sockets.values());
-  namespaces.push({
-    name: "/",
-    sockets: sockets.length,
-  });
-  namespaces.push({
-    name: "/admin",
-    sockets: adminSockets.length,
-  });
-
-  totalSockets = sockets.length + adminSockets.length;
-
-  // Get details for each socket in default namespace
-  sockets.forEach((sock) => {
-    const messageCount = messageStats.get(sock.id) || 0;
-    totalMessages += messageCount;
-
-    socketDetails.push({
-      id: sock.id,
-      namespace: "/",
-      rooms: Array.from(sock.rooms),
-      messageCount: messageCount,
-      connectedAt: sock.handshake.time || Date.now(),
-    });
-  });
-
-  // Get details for each socket in admin namespace
-  adminSockets.forEach((sock) => {
-    const messageCount = messageStats.get(sock.id) || 0;
-    totalMessages += messageCount;
-
-    socketDetails.push({
-      id: sock.id,
-      namespace: "/admin",
-      rooms: Array.from(sock.rooms),
-      messageCount: messageCount,
-      connectedAt: sock.handshake.time || Date.now(),
-    });
-  });
-
-  return {
-    namespaces,
-    totalSockets,
-    totalMessages,
-    sockets: socketDetails,
-  };
-}
-
 io.on("connection", (socket) => {
   console.log("user connected");
   console.log("connected with", socket.conn.transport.name);
@@ -204,6 +108,99 @@ io.on("connection", (socket) => {
   messageStats.set(socket.id, 0);
   broadcastStatsToAdmins();
 });
+
+const adminNamespace = io.of("/admin");
+//default namespace: io.of("/") 
+
+adminNamespace.use((socket, next) => {
+  const password = socket.handshake.auth.password;
+
+  if (password === ADMIN_PASSWORD) {
+    console.log("Admin authenticated:", socket.id);
+    next();
+  } else {
+    console.log("Admin authentication failed");
+    next(new Error("Falsches Passwort!"));
+  }
+});
+
+function broadcastStatsToAdmins() {
+  const stats = getServerStats();
+  adminNamespace.emit("stats", stats);
+}
+
+adminNamespace.on("connection", (socket) => {
+  console.log("Admin connected:", socket.id);
+
+  // Send stats on request
+  socket.on("getStats", (callback) => {
+    const stats = getServerStats();
+    if (typeof callback === "function") {
+      callback(stats);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Admin disconnected:", socket.id);
+  });
+});
+
+function getServerStats() {
+  const namespaces = [];
+  let totalSockets = 0;
+  let totalMessages = 0;
+  const socketDetails = [];
+
+  // Only get stats for default namespace '/'
+  const mainNamespace = io.of("/");
+  const adminNamespace = io.of("/admin");
+  const sockets = Array.from(mainNamespace.sockets.values());
+  const adminSockets = Array.from(adminNamespace.sockets.values());
+  namespaces.push({
+    name: "/",
+    sockets: sockets.length,
+  });
+  namespaces.push({
+    name: "/admin",
+    sockets: adminSockets.length,
+  });
+
+  totalSockets = sockets.length + adminSockets.length;
+
+  // Get details for each socket in default namespace
+  sockets.forEach((sock) => {
+    const messageCount = messageStats.get(sock.id) || 0;
+    totalMessages += messageCount;
+
+    socketDetails.push({
+      id: sock.id,
+      namespace: "/",
+      rooms: Array.from(sock.rooms),
+      messageCount: messageCount,
+      connectedAt: sock.handshake.time || Date.now(),
+    });
+  });
+
+  // Get details for each socket in admin namespace
+  adminSockets.forEach((sock) => {
+    const messageCount = messageStats.get(sock.id) || 0;
+    totalMessages += messageCount;
+
+    socketDetails.push({
+      id: sock.id,
+      namespace: "/admin",
+      rooms: Array.from(sock.rooms),
+      messageCount: messageCount,
+    });
+  });
+
+  return {
+    namespaces,
+    totalSockets,
+    totalMessages,
+    sockets: socketDetails,
+  };
+}
 
 httpServer.listen(3000, () => {
   console.log("Server läuft auf http://localhost:3000");

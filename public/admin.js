@@ -1,9 +1,3 @@
-// Admin Dashboard Client
-let socket = null; // Socket for /admin namespace (stats, authentication)
-let broadcastSocket = null; // Socket for default namespace (broadcasting)
-let statsInterval = null;
-
-// Initialize broadcast socket immediately
 broadcastSocket = io("http://localhost:3000");
 
 function sendFromAdminDashboard() {
@@ -22,27 +16,63 @@ function sendFromAdminDashboard() {
   );
 }
 
-// Connect to admin namespace with password in auth
-adminSocket = io("/admin", {
-  auth: {
-    password: password,
-  },
-});
+function login() {
+  const password = document.getElementById("password").value;
+  const errorDiv = document.getElementById("loginError");
 
-adminSocket.on("connect", () => {
-  console.log("Admin connected:", socket.id);
-  // Hide login, show dashboard
-  document.getElementById("loginSection").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
+  if (!password) {
+    errorDiv.textContent = "Bitte Passwort eingeben!";
+    errorDiv.style.display = "block";
+    return;
+  }
 
-  // Request initial stats
-  refreshStats();
-  // Stats will be pushed automatically via 'stats' event
-});
+  // Connect to admin namespace with password in auth
+  adminSocket = io("/admin", {
+    auth: {
+      password: password,
+    },
+  });
+  
+  adminSocket.on("stats", (data) => {
+    updateDashboard(data);
+  });
 
-adminSocket.on("stats", (data) => {
-  updateDashboard(data);
-});
+  adminSocket.on("connect", () => {
+    console.log("Admin connected:", adminSocket.id);
+    // Hide login, show dashboard
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    updateStatus("connected");
+
+    // Request initial stats
+    refreshStats();
+    // Stats will be pushed automatically via 'stats' event
+  });
+
+  adminSocket.on("connect_error", (err) => {
+    console.error("Connection error:", err.message);
+    errorDiv.textContent = err.message || "Verbindungsfehler!";
+    errorDiv.style.display = "block";
+    // Reset socket
+    if (adminSocket) {
+      adminSocket.disconnect();
+      adminSocket = null;
+    }
+  });
+
+  adminSocket.on("disconnect", (reason) => {
+    console.log("Admin disconnected:", reason);
+    updateStatus("disconnected");
+  });
+
+  adminSocket.on("reconnect", () => {
+    console.log("Admin reconnected");
+    updateStatus("connected");
+    refreshStats();
+  });
+
+  
+}
 
 // Refresh stats from server
 function refreshStats() {
@@ -103,13 +133,12 @@ function updateDashboard(stats) {
   }
 }
 
-function login() {
-  const password = document.getElementById("password").value;
-  const errorDiv = document.getElementById("loginError");
-
-  if (!password) {
-    errorDiv.textContent = "Bitte Passwort eingeben!";
-    errorDiv.style.display = "block";
-    return;
+// Update connection status display
+function updateStatus(status) {
+  const statusDiv = document.getElementById("status");
+  if (status === "connected") {
+    statusDiv.textContent = "Status: Verbunden";
+  } else {
+    statusDiv.textContent = "Status: Nicht verbunden";
   }
 }
