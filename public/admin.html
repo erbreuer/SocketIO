@@ -7,7 +7,7 @@
     <body>
         <h1>Admin Dashboard</h1>
 
-        <!-- Login Section -->
+        <!--Login-->
         <div id="loginSection">
             <h2>Admin Login</h2>
             <p></p>Bitte geben Sie das Admin-Passwort ein:</p>
@@ -16,7 +16,7 @@
             <button onclick="login()">Login</button>
         </div>
 
-        <!-- Dashboard Section -->
+        <!--Dashboard-->
         <div id="dashboard" style="display: none">
             <h2>Server Statistiken</h2>
             <div id="status">Verbindung wird hergestellt...</div>
@@ -38,15 +38,24 @@
                         <th>Namespace</th>
                         <th>Räume</th>
                         <th>Gesendete Nachrichten</th>
-                        <th>Verbunden seit</th>
                     </tr>
                 </thead>
                 <tbody id="socketTableBody">
                     <tr>
-                        <td colspan="5">Keine Daten verfügbar</td>
+                        <td colspan="4">Keine Daten verfügbar</td>
                     </tr>
                 </tbody>
             </table>
+
+            <h3>Nachricht an alle senden</h3>
+            <input
+                type="text"
+                id="broadcastMessage"
+                placeholder="Nachricht eingeben..."
+            />
+            <button onclick="sendFromAdminDashboard()">
+                An alle senden
+            </button>
         </div>
 
         <script src="/socket.io/socket.io.js"></script>

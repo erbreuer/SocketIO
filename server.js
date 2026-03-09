@@ -3,7 +3,6 @@ import path from "path";
 import { readFile } from "fs";
 import { Server } from "socket.io";
 
-// Admin password (in production: use environment variable!)
 const ADMIN_PASSWORD = "admin123";
 
 // Track message counts per socket
@@ -13,7 +12,7 @@ const httpServer = http.createServer((req, res) => {
   let filePath;
   if (req.url === "/") {
     filePath = "./public/intro.html";
-  } else if (req.url === "/room") {
+  } else if (req.url === "/rooms") {
     filePath = "./public/rooms.html";
   } else if (req.url === "/admin") {
     filePath = "./public/admin.html";
@@ -86,14 +85,19 @@ function getServerStats() {
 
   // Only get stats for default namespace '/'
   const mainNamespace = io.of("/");
+  const adminNamespace = io.of("/admin");
   const sockets = Array.from(mainNamespace.sockets.values());
-
+  const adminSockets = Array.from(adminNamespace.sockets.values());
   namespaces.push({
     name: "/",
     sockets: sockets.length,
   });
+  namespaces.push({
+    name: "/admin",
+    sockets: adminSockets.length,
+  });
 
-  totalSockets = sockets.length;
+  totalSockets = sockets.length + adminSockets.length;
 
   // Get details for each socket in default namespace
   sockets.forEach((sock) => {
@@ -109,6 +113,20 @@ function getServerStats() {
     });
   });
 
+  // Get details for each socket in admin namespace
+  adminSockets.forEach((sock) => {
+    const messageCount = messageStats.get(sock.id) || 0;
+    totalMessages += messageCount;
+
+    socketDetails.push({
+      id: sock.id,
+      namespace: "/admin",
+      rooms: Array.from(sock.rooms),
+      messageCount: messageCount,
+      connectedAt: sock.handshake.time || Date.now(),
+    });
+  });
+
   return {
     namespaces,
     totalSockets,
@@ -117,20 +135,17 @@ function getServerStats() {
   };
 }
 
-// Main namespace (default)
 io.on("connection", (socket) => {
   console.log("user connected");
   console.log("connected with", socket.conn.transport.name);
   socket.conn.on("upgrade", (transport) => {
     console.log("upgraded to", transport.name);
   });
-  
+
   socket.on("hello", (arg, callback) => {
     console.log(arg);
-      callback("Hello from server!");
+    callback("Hello from server!");
   });
-
-  
 
   socket.on("joinRoom", (room, callback) => {
     console.log(`Socket ${socket.id} joined room: ${room}`);
@@ -159,18 +174,21 @@ io.on("connection", (socket) => {
 
     if (room) {
       // Broadcast message to all clients in the room
-      io.to(room).emit("message", message);
+      io.to(room).emit("message", `${message} (aus ${room})`);
     } else {
+      // Broadcast globally excluding the sender
       socket.broadcast.emit(
         "message",
-        `User mit id: ${socket.id} hat gesendet:`,
+        `User mit id: ${socket.id} hat gesendet: ${message}`,
       );
-      io.emit("message", message);
+      // Send message to back to sender
+      socket.emit("message", message);
     }
     // Send acknowledgment back to sender
     if (typeof callback === "function") {
       callback("Message received by server");
     }
+
     // Broadcast updated stats to admins (message count changed)
     broadcastStatsToAdmins();
   });
@@ -182,7 +200,7 @@ io.on("connection", (socket) => {
     // Broadcast updated stats to admins
     broadcastStatsToAdmins();
   });
-  
+
   messageStats.set(socket.id, 0);
   broadcastStatsToAdmins();
 });
