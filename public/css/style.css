@@ -1,0 +1,229 @@
+/* General Styles */
+body {
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Typography */
+h1 {
+    text-align: center;
+    color: #333;
+    margin: 0 0 30px 0;
+    font-size: 36px;
+    font-weight: 600;
+}
+
+h2 {
+    text-align: center;
+    color: #555;
+    margin: 30px 0 20px 0;
+    font-size: 26px;
+    font-weight: 500;
+}
+
+h3 {
+    text-align: center;
+    color: #666;
+    margin: 25px 0 15px 0;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+/* Forms */
+.form-group {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* Buttons */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:active {
+    background-color: #004494;
+}
+
+/* Status Messages */
+.status {
+    text-align: center;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.status.connected {
+    color: #28a745;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.status.disconnected {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 12px;
+    border-radius: 4px;
+    margin: 10px 0;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Stats Display */
+.stat-item {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 32px;
+}
+
+/* Message List */
+#messages,
+#messageList {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.message-item {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.message-item input[type="checkbox"] {
+    margin: 0 8px 0 0;
+    vertical-align: middle;
+}
+
+.message-item label {
+    vertical-align: middle;
+    cursor: default;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+table thead {
+    background-color: #f8f9fa;
+}
+
+table th {
+    padding: 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #dee2e6;
+}
+
+table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Sections */
+.section {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.namespace-list {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Hide utility */
+.hidden {
+    display: none;
+}
+
+/* Broadcast Section */
+.broadcast-section {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid #e9ecef;
+}
+
+/* Room Section */
+.room-section {
+    text-align: center;
+    margin: 20px 0;
+}

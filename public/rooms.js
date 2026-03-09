@@ -13,10 +13,11 @@ function joinRoom(roomNumber) {
     // Add to joined rooms set
     joinedRooms.add(roomName);
     // Show corresponding leave button
-    document.getElementById(`leaveBtn${roomNumber}`).style.display =
-      "inline-block";
+    document.getElementById(`leaveBtn${roomNumber}`).classList.remove("hidden");
     // Update status
     updateRoomStatus();
+    // Clear all messages
+    document.getElementById("messages").innerHTML = "";
   });
   console.log(`Joining room: ${roomName}`);
 }
@@ -34,7 +35,7 @@ function leaveRoom(roomNumber) {
     // Remove from joined rooms set
     joinedRooms.delete(roomName);
     // Hide corresponding leave button
-    document.getElementById(`leaveBtn${roomNumber}`).style.display = "none";
+    document.getElementById(`leaveBtn${roomNumber}`).classList.add("hidden");
     // Update status
     updateRoomStatus();
   });
@@ -42,10 +43,13 @@ function leaveRoom(roomNumber) {
 
 function updateRoomStatus() {
   const statusElement = document.getElementById("roomStatus");
+  statusElement.className = "status";
+
   if (joinedRooms.size === 0) {
-    statusElement.textContent = "Aktuelle Räume: keine";
+    statusElement.textContent = "Current Rooms: none";
   } else {
-    statusElement.textContent = `Aktuelle Räume: ${Array.from(joinedRooms).join(", ")}`;
+    statusElement.textContent = `Current Rooms: ${Array.from(joinedRooms).join(", ")}`;
+    statusElement.classList.add("connected");
   }
 }
 
@@ -53,6 +57,7 @@ function sendMessage() {
   const message = document.getElementById("msg").value;
 
   if (!message.trim()) return;
+
   if (joinedRooms.size > 0) {
     joinedRooms.forEach((room) => {
       socket.emit(
@@ -67,7 +72,7 @@ function sendMessage() {
       );
     });
   } else {
-    // No room
+    // No room - send globally
     socket.emit(
       "message",
       {
@@ -85,6 +90,7 @@ function sendMessage() {
 
 socket.on("message", (msg) => {
   const li = document.createElement("li");
+  li.className = "message-item";
   li.textContent = msg;
   document.getElementById("messages").appendChild(li);
 });

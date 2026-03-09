@@ -2,24 +2,38 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Socket Chat</title>
+        <title>Socket Chat - Rooms</title>
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <h1>Rooms in Socket IO</h1>
-        <button onclick="joinRoom(1)">Raum 1 betreten</button>
-        <button id="leaveBtn1" onclick="leaveRoom(1)" style="display: none">
-            Raum 1 verlassen
-        </button>
-        <button onclick="joinRoom(2)">Raum 2 betreten</button>
-        <button id="leaveBtn2" onclick="leaveRoom(2)" style="display: none">
-            Raum 2 verlassen
-        </button>
-        <p id="roomStatus">Aktuelle Räume: keine</p>
+        <div class="container">
+            <h1>Rooms in Socket.IO</h1>
 
-        <ul id="messages"></ul>
+            <div class="room-section">
+                <button onclick="joinRoom(1)">Join Room 1</button>
+                <button id="leaveBtn1" onclick="leaveRoom(1)" class="hidden">
+                    Leave Room 1
+                </button>
+                <button onclick="joinRoom(2)">Join Room 2</button>
+                <button id="leaveBtn2" onclick="leaveRoom(2)" class="hidden">
+                    Leave Room 2
+                </button>
+            </div>
 
-        <input id="msg" placeholder="Nachricht eingeben" />
-        <button onclick="sendMessage()">Send</button>
+            <div class="section">
+                <p id="roomStatus" class="status">Current Rooms: none</p>
+            </div>
+
+            <div class="section">
+                <h2>Messages</h2>
+                <ul id="messages"></ul>
+            </div>
+
+            <div class="section">
+                <input id="msg" type="text" placeholder="Enter message" />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="rooms.js"></script>

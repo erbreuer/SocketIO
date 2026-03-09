@@ -3,59 +3,79 @@
     <head>
         <meta charset="utf-8" />
         <title>Admin Dashboard - Socket.IO</title>
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <h1>Admin Dashboard</h1>
+        <div class="container">
+            <h1>Admin Dashboard</h1>
 
-        <!--Login-->
-        <div id="loginSection">
-            <h2>Admin Login</h2>
-            <p></p>Bitte geben Sie das Admin-Passwort ein:</p>
-            <input type="password" id="password" placeholder="Passwort" />
-            <div id="loginError" style="color: red; display: none"></div>
-            <button onclick="login()">Login</button>
-        </div>
+            <!-- Login Section -->
+            <div id="loginSection">
+                <h2>Admin Login</h2>
+                <div class="form-group">
+                    <p></p>Please enter the admin password:</p>
+                    <input type="password" id="password" placeholder="Password" />
+                    <div id="loginError" class="error" style="display: none"></div>
+                    <button onclick="login()">Login</button>
+                </div>
+            </div>
 
-        <!--Dashboard-->
-        <div id="dashboard" style="display: none">
-            <h2>Server Statistiken</h2>
-            <div id="status">Verbindung wird hergestellt...</div>
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="hidden">
+                <div id="status" class="status">Connecting...</div>
 
-            <h3>Namespaces</h3>
-            <div id="namespacesList">Laden...</div>
+                <div class="section">
+                    <h3>Namespaces</h3>
+                    <div id="namespacesList" class="namespace-list">Loading...</div>
+                </div>
 
-            <h3>Verbundene Sockets</h3>
-            <div id="connectedCount">0</div>
+                <div class="section">
+                    <h3>Connected Sockets</h3>
+                    <div class="stat-item">
+                        <span id="connectedCount" class="stat-value">0</span>
+                    </div>
+                </div>
 
-            <h3>Gesendete Nachrichten (gesamt)</h3>
-            <div id="totalMessages">0</div>
+                <div class="section">
+                    <h3>Total Messages Sent</h3>
+                    <div class="stat-item">
+                        <span id="totalMessages" class="stat-value">0</span>
+                    </div>
+                </div>
 
-            <h3>Socket Statistiken</h3>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Socket ID</th>
-                        <th>Namespace</th>
-                        <th>Räume</th>
-                        <th>Gesendete Nachrichten</th>
-                    </tr>
-                </thead>
-                <tbody id="socketTableBody">
-                    <tr>
-                        <td colspan="4">Keine Daten verfügbar</td>
-                    </tr>
-                </tbody>
-            </table>
+                <div class="section">
+                    <h3>Socket Statistics</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Socket ID</th>
+                                <th>Namespace</th>
+                                <th>Rooms</th>
+                                <th>Messages Sent</th>
+                            </tr>
+                        </thead>
+                        <tbody id="socketTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align: center">No data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <h3>Nachricht an alle senden</h3>
-            <input
-                type="text"
-                id="broadcastMessage"
-                placeholder="Nachricht eingeben..."
-            />
-            <button onclick="sendFromAdminDashboard()">
-                An alle senden
-            </button>
+                <div class="broadcast-section">
+                    <h3>Broadcast Message to All</h3>
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            id="broadcastMessage"
+                            placeholder="Enter message..."
+                        />
+                        <button onclick="sendFromAdminDashboard()">
+                            Send to All
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script src="/socket.io/socket.io.js"></script>

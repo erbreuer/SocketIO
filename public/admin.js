@@ -1,8 +1,9 @@
+// Initialize broadcast socket immediately
 broadcastSocket = io("http://localhost:3000");
 
 function sendFromAdminDashboard() {
   const message = document.getElementById("broadcastMessage").value;
-  console.log(message);
+  console.log("Broadcasting message:", message);
 
   broadcastSocket.emit(
     "message",
@@ -21,7 +22,7 @@ function login() {
   const errorDiv = document.getElementById("loginError");
 
   if (!password) {
-    errorDiv.textContent = "Bitte Passwort eingeben!";
+    errorDiv.textContent = "Please enter a password!";
     errorDiv.style.display = "block";
     return;
   }
@@ -33,25 +34,24 @@ function login() {
     },
   });
   
+  // Listen for stats updates from server
   adminSocket.on("stats", (data) => {
     updateDashboard(data);
   });
-
   adminSocket.on("connect", () => {
     console.log("Admin connected:", adminSocket.id);
     // Hide login, show dashboard
     document.getElementById("loginSection").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("dashboard").classList.remove("hidden");
     updateStatus("connected");
 
     // Request initial stats
     refreshStats();
-    // Stats will be pushed automatically via 'stats' event
   });
 
   adminSocket.on("connect_error", (err) => {
     console.error("Connection error:", err.message);
-    errorDiv.textContent = err.message || "Verbindungsfehler!";
+    errorDiv.textContent = err.message || "Connection error!";
     errorDiv.style.display = "block";
     // Reset socket
     if (adminSocket) {
@@ -98,7 +98,7 @@ function updateDashboard(stats) {
       .map((ns) => `<div>${ns.name} (${ns.sockets} sockets)</div>`)
       .join("");
   } else {
-    namespacesList.innerHTML = "<p>Keine Namespaces gefunden</p>";
+    namespacesList.innerHTML = "<p>No namespaces found</p>";
   }
 
   // Update connected count
@@ -118,7 +118,7 @@ function updateDashboard(stats) {
         <tr>
           <td>${s.id}</td>
           <td>${s.namespace}</td>
-          <td>${s.rooms.filter((r) => r !== s.id).join(", ") || "keine"}</td>
+          <td>${s.rooms.filter((r) => r !== s.id).join(", ") || "none"}</td>
           <td>${s.messageCount}</td>
         </tr>
       `,
@@ -127,7 +127,7 @@ function updateDashboard(stats) {
   } else {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="4">Keine verbundenen Sockets</td>
+        <td colspan="4" style="text-align: center">No connected sockets</td>
       </tr>
     `;
   }
@@ -136,9 +136,26 @@ function updateDashboard(stats) {
 // Update connection status display
 function updateStatus(status) {
   const statusDiv = document.getElementById("status");
+  statusDiv.className = "status";
+
   if (status === "connected") {
-    statusDiv.textContent = "Status: Verbunden";
+    statusDiv.textContent = "Status: Connected";
+    statusDiv.classList.add("connected");
   } else {
-    statusDiv.textContent = "Status: Nicht verbunden";
+    statusDiv.textContent = "Status: Disconnected";
+    statusDiv.classList.add("disconnected");
   }
 }
+
+// Allow login with Enter key
+document.addEventListener("DOMContentLoaded", () => {
+  const passwordInput = document.getElementById("password");
+  if (passwordInput) {
+    passwordInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        login();
+      }
+    });
+    passwordInput.focus();
+  }
+});

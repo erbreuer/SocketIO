@@ -4,34 +4,27 @@ import { readFile } from "fs";
 import { Server } from "socket.io";
 
 const ADMIN_PASSWORD = "admin123";
-
-// Track message counts per socket
 const messageStats = new Map();
 
 const httpServer = http.createServer((req, res) => {
-  let filePath;
-  if (req.url === "/") {
-    filePath = "./public/intro.html";
-  } else if (req.url === "/rooms") {
-    filePath = "./public/rooms.html";
-  } else if (req.url === "/admin") {
-    filePath = "./public/admin.html";
-  } else {
-    filePath = `./public${req.url}`;
-  }
-
+  const routes = {
+    "/": "./public/intro.html",
+    "/rooms": "./public/rooms.html",
+    "/admin": "./public/admin.html",
+  };
+  const filePath = routes[req.url] || `./public${req.url}`;
   readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404);
       return res.end("Datei nicht gefunden");
     }
-
     const ext = path.extname(filePath);
-    let contentType = "text/plain";
-    if (ext === ".html") contentType = "text/html";
-    if (ext === ".js") contentType = "application/javascript";
-    if (ext === ".css") contentType = "text/css";
-
+    const contentTypes = {
+      ".html": "text/html",
+      ".js": "application/javascript",
+      ".css": "text/css",
+    };
+    const contentType = contentTypes[ext] || "text/plain";
     res.writeHead(200, { "Content-Type": contentType });
     res.end(data);
   });
@@ -72,18 +65,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", ({ room, message }, callback) => {
-    // Increment message count for this socket
-    const currentCount = messageStats.get(socket.id) || 0;
-    messageStats.set(socket.id, currentCount + 1);
-
     if (room) {
       // Broadcast message to all clients in the room
-      io.to(room).emit("message", `${message} (aus ${room})`);
+      io.to(room).emit("message", `User ${socket.id}: ${message} (from ${room})`);
     } else {
       // Broadcast globally excluding the sender
       socket.broadcast.emit(
         "message",
-        `User mit id: ${socket.id} hat gesendet: ${message}`,
+        `User ${socket.id}: ${message}`,
       );
       // Send message to back to sender
       socket.emit("message", message);
@@ -93,15 +82,13 @@ io.on("connection", (socket) => {
       callback("Message received by server");
     }
 
-    // Broadcast updated stats to admins (message count changed)
+    const currentCount = messageStats.get(socket.id) || 0;
+    messageStats.set(socket.id, currentCount + 1);
     broadcastStatsToAdmins();
   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
-    // Clean up message stats after disconnect (optional: keep for history)
-    // messageStats.delete(socket.id);
-    // Broadcast updated stats to admins
     broadcastStatsToAdmins();
   });
 
@@ -120,7 +107,7 @@ adminNamespace.use((socket, next) => {
     next();
   } else {
     console.log("Admin authentication failed");
-    next(new Error("Falsches Passwort!"));
+    next(new Error("Wrong Password!"));
   }
 });
 

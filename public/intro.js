@@ -3,7 +3,7 @@ const socket = io("http://localhost:3000");
 let messageCounter = 0;
 
 socket.on("connect", () => {
-  console.log("Connected to server with ID:", socket.id);
+  console.log("Connected to server with Socket ID:", socket.id);
   getTransportInformation();
   updateConnectButton();
 });
@@ -25,7 +25,7 @@ function sendMessage() {
   ul.appendChild(li);
 
   // Send message with acknowledgment callback
-  socket.emit("hello", "Hallo vom Client!", (response) => {
+  socket.emit("hello", "Hello from client!", (response) => {
     console.log(response);
     if (response) {
       const ackCheckbox = document.getElementById(`${messageId}-ack`);
@@ -40,10 +40,12 @@ socket.on("connect", () => {
   setStatus("connected");
   updateConnectButton();
 });
+
 socket.on("disconnect", () => {
   setStatus("disconnected");
   updateConnectButton();
 });
+
 socket.on("reconnect_attempt", () => setStatus("reconnecting..."));
 socket.on("reconnect", () => setStatus("reconnected"));
 
@@ -58,11 +60,10 @@ function toggleConnection() {
   updateConnectButton();
 }
 
-
-
 function createMessageListItem(messageId) {
   const li = document.createElement("li");
   li.id = messageId;
+  li.className = "message-item";
 
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
@@ -70,11 +71,11 @@ function createMessageListItem(messageId) {
   checkbox.disabled = true;
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = "Nachricht gesendet - ";
+  textSpan.textContent = "Message sent - ";
 
   const checkboxLabel = document.createElement("label");
   checkboxLabel.htmlFor = `${messageId}-ack`;
-  checkboxLabel.textContent = "Antwort vom Server erhalten";
+  checkboxLabel.textContent = "Response received from server";
 
   li.appendChild(textSpan);
   li.appendChild(checkbox);
@@ -83,8 +84,6 @@ function createMessageListItem(messageId) {
 
   return li;
 }
-
-
 
 function updateConnectButton() {
   const btn = document.getElementById("connectBtn");
@@ -96,6 +95,16 @@ function updateConnectButton() {
 }
 
 function setStatus(text) {
-  document.getElementById("status").textContent = text;
-}
+  const statusSpan = document.getElementById("status");
+  const statusContainer = document.getElementById("statusContainer");
 
+  statusSpan.textContent = text;
+
+  // Update status container styling
+  statusContainer.className = "status";
+  if (text === "connected" || text === "reconnected") {
+    statusContainer.classList.add("connected");
+  } else if (text === "disconnected") {
+    statusContainer.classList.add("disconnected");
+  }
+}

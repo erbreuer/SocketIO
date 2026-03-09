@@ -3,16 +3,30 @@
     <head>
         <meta charset="utf-8" />
         <title>Socket Chat</title>
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <h1>Einfuehrung in Socket.IO</h1>
+        <div class="container">
+            <h1>Introduction to Socket.IO</h1>
 
-        <button onclick="sendMessage()">Nachricht senden</button>
-        <button id="connectBtn" onclick="toggleConnection()">Disconnect</button>
-        <p>Status: <span id="status">connecting...</span></p>
+            <div class="section">
+                <button onclick="sendMessage()">Send Message</button>
+                <button id="connectBtn" onclick="toggleConnection()">
+                    Disconnect
+                </button>
+            </div>
 
-        <h2>Gesendete Nachrichten</h2>
-        <ul id="messageList"></ul>
+            <div class="section">
+                <p class="status" id="statusContainer">
+                    Status: <span id="status">connecting...</span>
+                </p>
+            </div>
+
+            <div class="section">
+                <h2>Received Messages</h2>
+                <ul id="messageList"></ul>
+            </div>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="intro.js"></script>
